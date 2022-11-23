@@ -12,5 +12,15 @@ namespace SCPReplacer
         public override string Name => "SCP Replacer";
         public override string Author => "Jon M";
         public override Version Version => new Version(1, 0, 0);
+
+        public override void OnEnabled()
+        {
+            base.OnEnabled();
+        }
+
+        public override void OnDisabled()
+        {
+            base.OnDisabled(); 
+        }
     }
 }
