@@ -9,5 +9,8 @@ namespace SCPReplacer
 {
     public class Plugin : Plugin<Config>
     {
+        public override string Name => "SCP Replacer";
+        public override string Author => "Jon M";
+        public override Version Version => new Version(1, 0, 0);
     }
 }
