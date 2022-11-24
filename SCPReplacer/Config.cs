@@ -17,5 +17,7 @@ namespace SCPReplacer
         public int ReplaceCutoff = 85;
         [Description("The required percentage of health (0-100) the SCP must have had to be eligible for replacement. Defaults to 95 (no percent sign)")]
         public int RequiredHealthPercentage = 95;
+        [Description("Whether to use Chaos Theory branding in broadcasts")]
+        public bool ChaosTheoryBranding = true;
     }
 }

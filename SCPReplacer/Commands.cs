@@ -1,9 +1,11 @@
 ﻿using CommandSystem;
 using Exiled.API.Features;
+using RemoteAdmin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SCPReplacer
@@ -19,10 +21,57 @@ namespace SCPReplacer
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
-            Map.Broadcast(
-                new Exiled.API.Features.Broadcast("<color=yellow>[Chaos Theory SCP Replacer]</color>\nEnter <color=green>.volunteer 079</color> in the <color=blue>~</color> console to become <color=red>SCP-079</color>"));
-            response = "Recieved .volunteer";
-            return true;
+            if (Plugin.Instance == null)
+            {
+                Log.Error("Plugin.Instance was null in .volunteer command call. This should not happen; contact SCP Replace developer.");
+                response = "SCP Replace not currently enabled or working.";
+                return false;
+            }
+            if (arguments.Count != 1)
+            {
+                response = "Usage: .volunteer <SCP number>. Example: .volunteer 079 or .v 079";
+                return false;
+            }
+            if (Plugin.Instance.HasReplacementCutoffPassed())
+            {
+                response = "It is too late in the game to replace an SCP.";
+                return false;
+            }
+            // Remove non-digits from input so they can type e.g. "SCP-079" and have it still work
+            string requestedSCP = Regex.Replace(arguments.FirstElement(), @"[^0-9]", "");
+            foreach (Exiled.API.Features.Roles.Role role in Plugin.Instance.ScpsAwaitingReplacement)
+            {
+                if (role.ScpNumber() == requestedSCP)
+                {
+                    response = $"Changing your class to SCP-{requestedSCP}";
+                    if (sender is PlayerCommandSender playerSender)
+                    {
+                        Player player = Player.Get(playerSender.PlayerId);
+                        player.SetRole(role, Exiled.API.Enums.SpawnReason.ForceClass);
+                        Plugin.Instance.ScpsAwaitingReplacement.Remove(role);
+
+                        foreach (Player p in Player.List)
+                        {
+                            if (p.Id == playerSender.PlayerId)
+                            {
+                                p.Broadcast(new Exiled.API.Features.Broadcast(
+                                    $"{Plugin.Instance.BroadcastHeader()}You have replaced <color=red>SCP-{requestedSCP}</color>", 3, true));
+                            }
+                            else
+                            {
+                                // for everyone else:
+                                p.Broadcast(new Exiled.API.Features.Broadcast(
+                                    $"{Plugin.Instance.BroadcastHeader()}<color=red>SCP-{requestedSCP}</color> has been replaced", 3, true));
+                            }
+                        }
+
+                        Log.Info($"{player.Nickname} has replaced SCP-{requestedSCP}");
+                    }
+                    return true;
+                }
+            }
+            response = "Unable to find a recently quit SCP with that SCP number";
+            return false;
         }
     }
 }
