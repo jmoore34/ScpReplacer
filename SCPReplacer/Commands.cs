@@ -21,6 +21,7 @@ namespace SCPReplacer
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
+            // This should not happen, but this check is here for defensiveness
             if (Plugin.Instance == null)
             {
                 Log.Error("Plugin.Instance was null in .volunteer command call. This should not happen; contact SCP Replace developer.");
@@ -39,6 +40,8 @@ namespace SCPReplacer
             }
             // Remove non-digits from input so they can type e.g. "SCP-079" and have it still work
             string requestedSCP = Regex.Replace(arguments.FirstElement(), @"[^0-9]", "");
+            
+            // Look in our list of SCPs awaiting replacement and see if any matches
             foreach (Exiled.API.Features.Roles.Role role in Plugin.Instance.ScpsAwaitingReplacement)
             {
                 if (role.ScpNumber() == requestedSCP)
@@ -50,6 +53,8 @@ namespace SCPReplacer
                         player.SetRole(role, Exiled.API.Enums.SpawnReason.ForceClass);
                         Plugin.Instance.ScpsAwaitingReplacement.Remove(role);
 
+                        // Broadcast to everyone that the SCP has been replaced
+                        // and give a slightly different message to the player that replaced the SCP
                         foreach (Player p in Player.List)
                         {
                             if (p.Id == playerSender.PlayerId)
@@ -67,9 +72,11 @@ namespace SCPReplacer
 
                         Log.Info($"{player.Nickname} has replaced SCP-{requestedSCP}");
                     }
+                    // replacement successful
                     return true;
                 }
             }
+            // SCP was not in our list of SCPs awaiting replacement
             response = "Unable to find a recently quit SCP with that SCP number";
             return false;
         }
