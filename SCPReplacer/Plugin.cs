@@ -46,8 +46,11 @@ namespace SCPReplacer
         // A list of Roles (SCPs) that have quit early in the round and have not yet been replaced
         public List<Exiled.API.Features.Roles.Role> ScpsAwaitingReplacement { get; private set; } = new List<Exiled.API.Features.Roles.Role>();
         // A timer is used to keep track of how much time has passed since the beginning of the round
-        public Stopwatch RoundTimer { get; private set; } = new Stopwatch(); 
+        public Stopwatch RoundTimer { get; private set; } = new Stopwatch();
 
+        // These event handlers can be pulled out to their own class if needed.
+        // However, due to the small size of the plugin, I kept them in this class
+        // to cut back on coupling. (Partial classes would be another alternative)
         public void OnRoundStart()
         {
             ScpsAwaitingReplacement.Clear();
