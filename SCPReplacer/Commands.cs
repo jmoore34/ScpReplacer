@@ -1,16 +1,12 @@
-﻿using CommandSystem;
+﻿using System;
+using System.Text.RegularExpressions;
+using CommandSystem;
 using Exiled.API.Features;
 using RemoteAdmin;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace SCPReplacer
 {
-    [CommandHandler(typeof(CommandSystem.ClientCommandHandler))]
+    [CommandHandler(typeof(ClientCommandHandler))]
     public class Volunteer : ICommand
     {
         public string Command => "volunteer";
@@ -21,63 +17,55 @@ namespace SCPReplacer
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
-            // This should not happen, but this check is here for defensiveness
-            if (Plugin.Instance == null)
-            {
-                Log.Error("Plugin.Instance was null in .volunteer command call. This should not happen; contact SCP Replace developer.");
-                response = "SCP Replace not currently enabled or working.";
-                return false;
-            }
             if (arguments.Count != 1)
             {
-                response = "Usage: .volunteer <SCP number>. Example: .volunteer 079 or .v 079";
+                response = Plugin.Singleton.Translation.WrongUsageMessage;
                 return false;
             }
-            if (Plugin.Instance.HasReplacementCutoffPassed())
+
+            if (Plugin.Singleton.HasReplacementCutoffPassed())
             {
-                response = "It is too late in the game to replace an SCP.";
+                response = Plugin.Singleton.Translation.TooLateMessage;
                 return false;
             }
+
             // Remove non-digits from input so they can type e.g. "SCP-079" and have it still work
-            string requestedSCP = Regex.Replace(arguments.FirstElement(), @"[^0-9]", "");
-            
+            var requestedScp = arguments.FirstElement().ScpNumber();
+
             // Look in our list of SCPs awaiting replacement and see if any matches
-            foreach (Exiled.API.Features.Roles.Role role in Plugin.Instance.ScpsAwaitingReplacement)
+            foreach (var role in Plugin.Singleton.ScpsAwaitingReplacement)
             {
-                if (role.ScpNumber() == requestedSCP)
+                if (role.ScpNumber() == requestedScp)
                 {
-                    response = $"Changing your class to SCP-{requestedSCP}";
-                    if (sender is PlayerCommandSender playerSender)
+                    response = Plugin.Singleton.Translation.ChangedSuccessfullyMessage.Replace("%NUMBER%", requestedScp);
+                    if (Player.Get(sender) is Player player)
                     {
-                        Player player = Player.Get(playerSender.PlayerId);
-                        player.SetRole(role, Exiled.API.Enums.SpawnReason.ForceClass);
-                        Plugin.Instance.ScpsAwaitingReplacement.Remove(role);
+                        player.Role = role;
+                        Plugin.Singleton.ScpsAwaitingReplacement.Remove(role);
 
                         // Broadcast to everyone that the SCP has been replaced
                         // and give a slightly different message to the player that replaced the SCP
-                        foreach (Player p in Player.List)
+                        foreach (var p in Player.List)
                         {
-                            if (p.Id == playerSender.PlayerId)
+                            if (p == player)
                             {
-                                p.Broadcast(new Exiled.API.Features.Broadcast(
-                                    $"{Plugin.Instance.BroadcastHeader()}You have replaced <color=red>SCP-{requestedSCP}</color>", 3, true));
+                                // For the player that replaced the SCP:
+                                p.Broadcast(3, Plugin.Singleton.Translation.ChangedSuccessfullySelfBroadcast.Replace("%NUMBER%", requestedScp));
+                                continue;
                             }
-                            else
-                            {
-                                // for everyone else:
-                                p.Broadcast(new Exiled.API.Features.Broadcast(
-                                    $"{Plugin.Instance.BroadcastHeader()}<color=red>SCP-{requestedSCP}</color> has been replaced", 3, true));
-                            }
+                            // for everyone else:
+                            p.Broadcast(3, Plugin.Singleton.Translation.ChangedSuccessfullyEveryoneBroadcast.Replace("%NUMBER%", requestedScp));
                         }
-
-                        Log.Info($"{player.Nickname} has replaced SCP-{requestedSCP}");
+                        Log.Info($"{player.Nickname} has replaced SCP-{requestedScp}");
                     }
+
                     // replacement successful
                     return true;
                 }
             }
+
             // SCP was not in our list of SCPs awaiting replacement
-            response = "Unable to find a recently quit SCP with that SCP number";
+            response = Plugin.Singleton.Translation.NotSuccessfully;
             return false;
         }
     }
