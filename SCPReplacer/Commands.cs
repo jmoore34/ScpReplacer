@@ -40,7 +40,7 @@ namespace SCPReplacer
                     response = Plugin.Singleton.Translation.ChangedSuccessfullyMessage.Replace("%NUMBER%", requestedScp);
                     if (Player.Get(sender) is Player player)
                     {
-                        player.Role = role;
+                        player.SetRole(role, Exiled.API.Enums.SpawnReason.ForceClass);
                         Plugin.Singleton.ScpsAwaitingReplacement.Remove(role);
 
                         // Broadcast to everyone that the SCP has been replaced
