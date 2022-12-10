@@ -78,7 +78,13 @@ namespace SCPReplacer
                 // Let all non-SCPs (including spectators) know of the opportunity to become SCP
                 // SCPs are not told of this because then they would also have to be replaced after swapping 
                 foreach (var p in Player.List.Where(x => !x.IsScp))
-                    p.Broadcast(10, Translation.ReplaceBroadcast.Replace("%NUMBER%", scpNumber));
+                {
+                    var message = Translation.ReplaceBroadcast.Replace("%NUMBER%", scpNumber);
+                    // Longer broadcast time since beta test revealed users were having trouble reading it all in time
+                    p.Broadcast(16, Translation.BroadcastHeader + message);
+                    // Also send conole message in case they miss the broadcast
+                    p.SendConsoleMessage(message, "yellow");
+                }
 
                 // Add the SCP to our list so that a user can claim it with the .volunteer command
                 ScpsAwaitingReplacement.Add(ev.Player.Role);

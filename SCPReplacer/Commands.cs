@@ -40,7 +40,8 @@ namespace SCPReplacer
                     response = Plugin.Singleton.Translation.ChangedSuccessfullyMessage.Replace("%NUMBER%", requestedScp);
                     if (Player.Get(sender) is Player player)
                     {
-                        player.SetRole(role, Exiled.API.Enums.SpawnReason.ForceClass);
+                        // Late join spawn reason used to help distinguish from moderator forececlass
+                        player.SetRole(role, Exiled.API.Enums.SpawnReason.LateJoin);
                         Plugin.Singleton.ScpsAwaitingReplacement.Remove(role);
 
                         // Broadcast to everyone that the SCP has been replaced
@@ -50,11 +51,19 @@ namespace SCPReplacer
                             if (p == player)
                             {
                                 // For the player that replaced the SCP:
-                                p.Broadcast(3, Plugin.Singleton.Translation.ChangedSuccessfullySelfBroadcast.Replace("%NUMBER%", requestedScp));
+                                p.Broadcast(5, Plugin.Singleton.Translation.BroadcastHeader + 
+                                    Plugin.Singleton.Translation.ChangedSuccessfullySelfBroadcast.Replace("%NUMBER%", requestedScp),
+                                    Broadcast.BroadcastFlags.Normal,
+                                    true // Clear previous broadcast to overwrite lingering volunteer opportunity message
+                                    );
                                 continue;
                             }
                             // for everyone else:
-                            p.Broadcast(3, Plugin.Singleton.Translation.ChangedSuccessfullyEveryoneBroadcast.Replace("%NUMBER%", requestedScp));
+                            p.Broadcast(5, Plugin.Singleton.Translation.BroadcastHeader +
+                                Plugin.Singleton.Translation.ChangedSuccessfullyEveryoneBroadcast.Replace("%NUMBER%", requestedScp),
+                                Broadcast.BroadcastFlags.Normal,
+                                true // Clear previous broadcast to overwrite lingering volunteer opportunity message
+                                );
                         }
                         Log.Info($"{player.Nickname} has replaced SCP-{requestedScp}");
                     }
@@ -65,7 +74,14 @@ namespace SCPReplacer
             }
 
             // SCP was not in our list of SCPs awaiting replacement
-            response = Plugin.Singleton.Translation.NotSuccessfully;
+            if (Plugin.Singleton.ScpsAwaitingReplacement.IsEmpty())
+            {
+                response = Plugin.Singleton.Translation.NoEligibleSCPsError;
+            } else
+            {
+                response = Plugin.Singleton.Translation.InvalidSCPError
+                     + string.Join(", ", Plugin.Singleton.ScpsAwaitingReplacement); // display available SCP numbers
+            }
             return false;
         }
     }
