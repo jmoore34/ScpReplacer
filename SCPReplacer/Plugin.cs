@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
+using Exiled.Events.EventArgs.Player;
+using PlayerRoles;
 
 namespace SCPReplacer
 {
@@ -55,7 +57,7 @@ namespace SCPReplacer
 
         public void OnPlayerLeave(LeftEventArgs ev)
         {
-            if (ev.Player.IsScp && ev.Player.Role != RoleType.Scp0492)
+            if (ev.Player.IsScp && ev.Player.Role != RoleTypeId.Scp0492)
             {
                 var elapsedSeconds = RoundSummary.roundTime;
                 // Minimum required health (configurable percentage) of the SCP

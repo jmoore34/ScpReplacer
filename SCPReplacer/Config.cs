@@ -5,6 +5,9 @@ namespace SCPReplacer
 {
     public class Config : IConfig
     {
+        public bool Debug { get; set; } = false;
+
+
         [Description("The maximum time after the round start, in seconds, that a quitting SCP can cause the volunteer opportunity announcement (defaults to 60)")]
         public int QuitCutoff { get; set; } = 60;
 

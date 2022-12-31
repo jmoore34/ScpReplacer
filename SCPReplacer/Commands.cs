@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using CommandSystem;
 using Exiled.API.Features;
+using PlayerRoles;
 using RemoteAdmin;
 
 namespace SCPReplacer
@@ -41,7 +42,7 @@ namespace SCPReplacer
                     if (Player.Get(sender) is Player player)
                     {
                         // Late join spawn reason used to help distinguish from moderator forececlass
-                        player.SetRole(role, Exiled.API.Enums.SpawnReason.LateJoin);
+                        player.Role.Set(role.Type);
                         Plugin.Singleton.ScpsAwaitingReplacement.Remove(role);
 
                         // Broadcast to everyone that the SCP has been replaced
