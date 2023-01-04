@@ -42,9 +42,6 @@
     <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="0Harmony">
-      <HintPath>..\..\..\AppData\Roaming\EXILED\Plugins\dependencies\0Harmony.dll</HintPath>
-    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\packages\EXILED.6.0.0-beta.18\lib\net48\Assembly-CSharp-Publicized.dll</HintPath>
       <Private>True</Private>
@@ -113,9 +110,6 @@
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>$(SCPSL_Data)\Managed\UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="YamlDotNet">
-      <HintPath>..\..\..\AppData\Roaming\EXILED\Plugins\dependencies\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
