@@ -86,12 +86,6 @@
     <Reference Include="PluginAPI, Version=12.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>..\packages\EXILED.6.0.0-beta.18\lib\net48\PluginAPI.dll</HintPath>
     </Reference>
-    <Reference Include="SemanticVersioning">
-      <HintPath>..\..\..\AppData\Roaming\EXILED\Plugins\dependencies\SemanticVersioning.dll</HintPath>
-    </Reference>
-    <Reference Include="SemVer">
-      <HintPath>..\..\..\AppData\Roaming\EXILED\Plugins\dependencies\SemVer.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="Unity.Timeline">
