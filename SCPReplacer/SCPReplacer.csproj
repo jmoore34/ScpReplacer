@@ -49,10 +49,6 @@
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>$(SCPSL_Data)\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp-Publicized, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\EXILED.6.0.0-beta.20\lib\net48\Assembly-CSharp-Publicized.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="CommandSystem.Core, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\EXILED.6.0.0-beta.20\lib\net48\CommandSystem.Core.dll</HintPath>
     </Reference>
