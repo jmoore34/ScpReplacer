@@ -59,7 +59,7 @@ namespace SCPReplacer
         {
             if (ev.Player.IsScp && ev.Player.Role != RoleTypeId.Scp0492)
             {
-                var elapsedSeconds = RoundSummary.roundTime;
+                var elapsedSeconds = Round.ElapsedTime.TotalSeconds;
                 // Minimum required health (configurable percentage) of the SCP
                 // when they quit to be eligible for replacement
                 var requiredHealth = (int)(Config.RequiredHealthPercentage / 100.0 * ev.Player.MaxHealth);
@@ -102,7 +102,7 @@ namespace SCPReplacer
         /// <returns>whether the replacement period cutoff has passed (true if passed)</returns>
         public bool HasReplacementCutoffPassed()
         {
-            return RoundSummary.roundTime > Config.ReplaceCutoff;
+            return Round.ElapsedTime.TotalSeconds > Config.ReplaceCutoff;
         }
     }
 }
