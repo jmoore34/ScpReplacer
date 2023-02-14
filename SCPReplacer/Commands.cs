@@ -57,6 +57,7 @@ namespace SCPReplacer
                                     Broadcast.BroadcastFlags.Normal,
                                     true // Clear previous broadcast to overwrite lingering volunteer opportunity message
                                     );
+                                    foreach (CustomRole role in p.GetCustomRoles()) role.RemoveRole(p);
                                 continue;
                             }
                             // for everyone else:
