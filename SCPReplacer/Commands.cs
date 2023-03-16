@@ -1,9 +1,8 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using CommandSystem;
+﻿using CommandSystem;
 using Exiled.API.Features;
-using PlayerRoles;
-using RemoteAdmin;
+using Exiled.CustomRoles.API;
+using Exiled.CustomRoles.API.Features;
+using System;
 
 namespace SCPReplacer
 {
@@ -52,12 +51,16 @@ namespace SCPReplacer
                             if (p == player)
                             {
                                 // For the player that replaced the SCP:
-                                p.Broadcast(5, Plugin.Singleton.Translation.BroadcastHeader + 
+                                p.Broadcast(5, Plugin.Singleton.Translation.BroadcastHeader +
                                     Plugin.Singleton.Translation.ChangedSuccessfullySelfBroadcast.Replace("%NUMBER%", requestedScp),
                                     Broadcast.BroadcastFlags.Normal,
                                     true // Clear previous broadcast to overwrite lingering volunteer opportunity message
                                     );
-                                    foreach (CustomRole role in p.GetCustomRoles()) role.RemoveRole(p);
+
+                                // clear custom roles and effects the user already has
+                                foreach (CustomRole customRole in p.GetCustomRoles())
+                                    customRole.RemoveRole(p);
+                                p.DisableAllEffects();
                                 continue;
                             }
                             // for everyone else:
@@ -79,7 +82,8 @@ namespace SCPReplacer
             if (Plugin.Singleton.ScpsAwaitingReplacement.IsEmpty())
             {
                 response = Plugin.Singleton.Translation.NoEligibleSCPsError;
-            } else
+            }
+            else
             {
                 response = Plugin.Singleton.Translation.InvalidSCPError
                      + string.Join(", ", Plugin.Singleton.ScpsAwaitingReplacement); // display available SCP numbers
