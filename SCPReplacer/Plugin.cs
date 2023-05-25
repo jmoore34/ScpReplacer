@@ -1,4 +1,5 @@
 ﻿using Exiled.API.Features;
+using Exiled.CustomRoles.API;
 using Exiled.Events.EventArgs.Player;
 using PlayerRoles;
 using System;
@@ -62,7 +63,8 @@ namespace SCPReplacer
                 // Minimum required health (configurable percentage) of the SCP
                 // when they quit to be eligible for replacement
                 var requiredHealth = (int)(Config.RequiredHealthPercentage / 100.0 * ev.Player.MaxHealth);
-                var scpNumber = ev.Player.Role.ScpNumber();
+                var customRole = ev.Player.GetCustomRoles().FirstOrDefault();
+                var scpNumber = customRole?.Name.ScpNumber() ?? ev.Player.Role.ScpNumber();
                 Log.Info($"{ev.Player.Nickname} left {elapsedSeconds} seconds into the round, was SCP-{scpNumber} with {ev.Player.Health}/{ev.Player.MaxHealth} HP ({requiredHealth} required for replacement)");
                 if (elapsedSeconds > Config.QuitCutoff)
                 {
@@ -88,10 +90,12 @@ namespace SCPReplacer
                 }
 
                 // Add the SCP to our list so that a user can claim it with the .volunteer command
+
                 ScpsAwaitingReplacement.Add(new ScpToReplace
                 {
                     Name = scpNumber,
                     Role = ev.Player.Role,
+                    CustomRole = customRole
                 });
             }
         }

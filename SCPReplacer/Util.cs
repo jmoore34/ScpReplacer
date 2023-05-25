@@ -1,5 +1,4 @@
 ﻿using Exiled.API.Features;
-using Exiled.API.Features.Roles;
 using Exiled.CustomRoles.API;
 using Exiled.CustomRoles.API.Features;
 using System.Collections.Generic;
@@ -49,6 +48,10 @@ namespace SCPReplacer
 
             // Late join spawn reason used to help distinguish from moderator forececlass
             chosenPlayer.Role.Set(role.Role, Exiled.API.Enums.SpawnReason.LateJoin);
+            if (role.CustomRole is not null)
+            {
+                role.CustomRole.AddRole(chosenPlayer);
+            }
             Plugin.Singleton.ScpsAwaitingReplacement.Remove(role);
 
             // Broadcast to everyone that the SCP has been replaced
