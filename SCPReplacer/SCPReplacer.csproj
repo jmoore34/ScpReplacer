@@ -38,6 +38,7 @@
     <Compile Include="Config.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScpToReplace.cs" />
     <Compile Include="Translations.cs" />
     <Compile Include="Util.cs" />
   </ItemGroup>

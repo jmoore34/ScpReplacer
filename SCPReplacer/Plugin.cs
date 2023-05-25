@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Exiled.API.Features;
-using Exiled.Events.EventArgs;
+﻿using Exiled.API.Features;
 using Exiled.Events.EventArgs.Player;
 using PlayerRoles;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SCPReplacer
 {
@@ -19,14 +18,14 @@ namespace SCPReplacer
         public static Plugin Singleton { get; private set; }
 
         // A list of Roles (SCPs) that have quit early in the round and have not yet been replaced
-        public List<Exiled.API.Features.Roles.Role> ScpsAwaitingReplacement { get; } = new List<Exiled.API.Features.Roles.Role>();
+        public List<ScpToReplace> ScpsAwaitingReplacement { get; } = new List<ScpToReplace>();
 
         public override void OnEnabled()
         {
             // Set up the Singleton so we can easily get the instance with all the state
             // from another class.
             Singleton = this;
-            
+
             // Register event handlers
             Exiled.Events.Handlers.Server.RoundStarted += OnRoundStart;
             Exiled.Events.Handlers.Player.Left += OnPlayerLeave;
@@ -43,7 +42,7 @@ namespace SCPReplacer
             // This will prevent commands and other classes from being able to access
             // any state while the plugin is disabled
             Singleton = null;
-            
+
             base.OnDisabled();
         }
 
@@ -89,7 +88,11 @@ namespace SCPReplacer
                 }
 
                 // Add the SCP to our list so that a user can claim it with the .volunteer command
-                ScpsAwaitingReplacement.Add(ev.Player.Role);
+                ScpsAwaitingReplacement.Add(new ScpToReplace
+                {
+                    Name = scpNumber,
+                    Role = ev.Player.Role,
+                });
             }
         }
 

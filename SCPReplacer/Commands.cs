@@ -2,6 +2,7 @@
 using Exiled.API.Features;
 using Exiled.CustomRoles.API;
 using Exiled.CustomRoles.API.Features;
+using MEC;
 using System;
 
 namespace SCPReplacer
@@ -35,44 +36,24 @@ namespace SCPReplacer
             // Look in our list of SCPs awaiting replacement and see if any matches
             foreach (var role in Plugin.Singleton.ScpsAwaitingReplacement)
             {
-                if (role.ScpNumber() == requestedScp)
+                if (role.Name == requestedScp && Player.Get(sender) is Player player)
                 {
-                    response = Plugin.Singleton.Translation.ChangedSuccessfullyMessage.Replace("%NUMBER%", requestedScp);
-                    if (Player.Get(sender) is Player player)
+                    role.Volunteers.Add(player);
+
+                    if (role.LotteryTimeout == null)
                     {
-                        // Late join spawn reason used to help distinguish from moderator forececlass
-                        player.Role.Set(role.Type);
-                        Plugin.Singleton.ScpsAwaitingReplacement.Remove(role);
-
-                        // Broadcast to everyone that the SCP has been replaced
-                        // and give a slightly different message to the player that replaced the SCP
-                        foreach (var p in Player.List)
+                        role.LotteryTimeout = Timing.CallDelayed(Plugin.Singleton.Config.LotteryPeriodSeconds, () =>
                         {
-                            if (p == player)
-                            {
-                                // For the player that replaced the SCP:
-                                p.Broadcast(5, Plugin.Singleton.Translation.BroadcastHeader +
-                                    Plugin.Singleton.Translation.ChangedSuccessfullySelfBroadcast.Replace("%NUMBER%", requestedScp),
-                                    Broadcast.BroadcastFlags.Normal,
-                                    true // Clear previous broadcast to overwrite lingering volunteer opportunity message
-                                    );
-
-                                // clear custom roles and effects the user already has
-                                foreach (CustomRole customRole in p.GetCustomRoles())
-                                    customRole.RemoveRole(p);
-                                p.DisableAllEffects();
-                                continue;
-                            }
-                            // for everyone else:
-                            p.Broadcast(5, Plugin.Singleton.Translation.BroadcastHeader +
-                                Plugin.Singleton.Translation.ChangedSuccessfullyEveryoneBroadcast.Replace("%NUMBER%", requestedScp),
-                                Broadcast.BroadcastFlags.Normal,
-                                true // Clear previous broadcast to overwrite lingering volunteer opportunity message
-                                );
-                        }
-                        Log.Info($"{player.Nickname} has replaced SCP-{requestedScp}");
+                            role.Replace();
+                        });
                     }
 
+                    response = $"You have entered the lottery to become SCP {role.Name}.";
+                    player.Broadcast(5, Plugin.Singleton.Translation.BroadcastHeader +
+                                        Plugin.Singleton.Translation.EnteredLotteryBroadcast.Replace("%NUMBER%", requestedScp),
+                                        Broadcast.BroadcastFlags.Normal,
+                                        true // Clear previous broadcast to overwrite lingering volunteer opportunity message
+                                        );
                     // replacement successful
                     return true;
                 }
