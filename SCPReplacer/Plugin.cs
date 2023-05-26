@@ -57,22 +57,27 @@ namespace SCPReplacer
 
         public void OnPlayerLeave(LeftEventArgs ev)
         {
-            if (ev.Player.IsScp && ev.Player.Role != RoleTypeId.Scp0492)
+            ScpLeft(ev.Player);
+        }
+
+        public void ScpLeft(Player scpPlayer)
+        {
+            if (scpPlayer.IsScp && scpPlayer.Role != RoleTypeId.Scp0492)
             {
                 var elapsedSeconds = Round.ElapsedTime.TotalSeconds;
                 // Minimum required health (configurable percentage) of the SCP
                 // when they quit to be eligible for replacement
-                var requiredHealth = (int)(Config.RequiredHealthPercentage / 100.0 * ev.Player.MaxHealth);
-                var customRole = ev.Player.GetCustomRoles().FirstOrDefault();
-                var scpNumber = customRole?.Name.ScpNumber() ?? ev.Player.Role.ScpNumber();
-                Log.Info($"{ev.Player.Nickname} left {elapsedSeconds} seconds into the round, was SCP-{scpNumber} with {ev.Player.Health}/{ev.Player.MaxHealth} HP ({requiredHealth} required for replacement)");
+                var requiredHealth = (int)(Config.RequiredHealthPercentage / 100.0 * scpPlayer.MaxHealth);
+                var customRole = scpPlayer.GetCustomRoles().FirstOrDefault();
+                var scpNumber = customRole?.Name.ScpNumber() ?? scpPlayer.Role.ScpNumber();
+                Log.Info($"{scpPlayer.Nickname} left {elapsedSeconds} seconds into the round, was SCP-{scpNumber} with {scpPlayer.Health}/{scpPlayer.MaxHealth} HP ({requiredHealth} required for replacement)");
                 if (elapsedSeconds > Config.QuitCutoff)
                 {
                     Log.Info("This SCP will not be replaced because the quit cutoff has already passsed");
                     return;
                 }
 
-                if (ev.Player.Health < requiredHealth)
+                if (scpPlayer.Health < requiredHealth)
                 {
                     Log.Info("This SCP will not be replaced because they have lost too much health");
                     return;
@@ -94,7 +99,7 @@ namespace SCPReplacer
                 ScpsAwaitingReplacement.Add(new ScpToReplace
                 {
                     Name = scpNumber,
-                    Role = ev.Player.Role,
+                    Role = scpPlayer.Role,
                     CustomRole = customRole
                 });
             }

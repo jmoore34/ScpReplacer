@@ -1,9 +1,12 @@
 ﻿using CommandSystem;
+using Exiled.API.Extensions;
 using Exiled.API.Features;
 using Exiled.CustomRoles.API;
 using Exiled.CustomRoles.API.Features;
 using MEC;
+using PlayerRoles;
 using System;
+using System.Linq;
 
 namespace SCPReplacer
 {
@@ -70,6 +73,70 @@ namespace SCPReplacer
                      + string.Join(", ", Plugin.Singleton.ScpsAwaitingReplacement); // display available SCP numbers
             }
             return false;
+        }
+    }
+
+
+    [CommandHandler(typeof(ClientCommandHandler))]
+    public class HumanCommand : ICommand
+    {
+        public string Command => "human";
+
+        public string[] Aliases => new string[] { "no" };
+        public string Description => "Forfeit being an SCP and become a random human class instead (must be used near the start of the round)";
+
+
+        public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
+        {
+            if (Player.Get(sender) is Player scpPlayer)
+            {
+                if (!scpPlayer.IsScp)
+                {
+                    response = "You must be an SCP to use this command.";
+                    return false;
+                }
+                if (scpPlayer.Role == RoleTypeId.Scp0492)
+                {
+                    response = "SCP 049-2 cannot use this command.";
+                    return false;
+                }
+                var config = Plugin.Singleton.Config;
+                var elapsedSeconds = Round.ElapsedTime.TotalSeconds;
+                // Minimum required health (configurable percentage) of the SCP
+                // when they quit to be eligible for replacement
+                var requiredHealth = (int)(config.RequiredHealthPercentage / 100.0 * scpPlayer.MaxHealth);
+                var customRole = scpPlayer.GetCustomRoles().FirstOrDefault();
+                var scpNumber = customRole?.Name.ScpNumber() ?? scpPlayer.Role.ScpNumber();
+                Log.Info($"{scpPlayer.Nickname} left {elapsedSeconds} seconds into the round, was SCP-{scpNumber} with {scpPlayer.Health}/{scpPlayer.MaxHealth} HP ({requiredHealth} required for replacement)");
+                if (elapsedSeconds > config.QuitCutoff)
+                {
+                    response = "This command must be used closer to the start of the round.";
+                    return false;
+                }
+                if (scpPlayer.Health < requiredHealth)
+                {
+                    response = "You are too low health to use this command.";
+                    return false;
+                }
+                Plugin.Singleton.ScpLeft(scpPlayer);
+                var newRole = UnityEngine.Random.value switch
+                {
+                    < 0.45f => RoleTypeId.ClassD,
+                    < 0.9f => RoleTypeId.Scientist,
+                    _ => RoleTypeId.FacilityGuard
+                };
+                response = $"You became a {newRole}";
+                scpPlayer.Role.Set(newRole);
+                foreach (CustomRole custom in scpPlayer.GetCustomRoles())
+                    custom.RemoveRole(scpPlayer);
+                scpPlayer.Broadcast(10, Plugin.Singleton.Translation.BroadcastHeader + $"You became a <color={newRole.GetColor().ToHex()}>{newRole.GetFullName()}</color>");
+                return true;
+            }
+            else
+            {
+                response = "You must be a player to use this command";
+                return false;
+            }
         }
     }
 }
