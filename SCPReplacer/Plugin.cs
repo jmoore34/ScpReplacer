@@ -52,6 +52,11 @@ namespace SCPReplacer
         // to cut back on coupling. (Partial classes would be another alternative)
         public void OnRoundStart()
         {
+            foreach (var scp in Player.List.Where(p => p.IsScp))
+            {
+                scp.Broadcast(8, "Use <color=#ff4eac>.human</color> in the <color=#b8bd00>~</color> if you want to be a human class instead");
+            }
+
             ScpsAwaitingReplacement.Clear();
         }
 
@@ -59,6 +64,8 @@ namespace SCPReplacer
         {
             ScpLeft(ev.Player);
         }
+
+
 
         public void ScpLeft(Player scpPlayer)
         {
