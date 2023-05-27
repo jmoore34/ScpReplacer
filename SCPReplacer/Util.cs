@@ -1,6 +1,7 @@
 ﻿using Exiled.API.Features;
 using Exiled.CustomRoles.API;
 using Exiled.CustomRoles.API.Features;
+using MEC;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -47,10 +48,13 @@ namespace SCPReplacer
             role.Volunteers = null;
 
             // Late join spawn reason used to help distinguish from moderator forececlass
-            chosenPlayer.Role.Set(role.Role, Exiled.API.Enums.SpawnReason.LateJoin);
             if (role.CustomRole is not null)
             {
-                role.CustomRole.AddRole(chosenPlayer);
+                Timing.CallDelayed(1f, () => role.CustomRole.AddRole(chosenPlayer));
+            }
+            else
+            {
+                chosenPlayer.Role.Set(role.Role, Exiled.API.Enums.SpawnReason.LateJoin);
             }
             Plugin.Singleton.ScpsAwaitingReplacement.Remove(role);
 
