@@ -41,6 +41,12 @@ namespace SCPReplacer
             {
                 if (role.Name == requestedScp && Player.Get(sender) is Player player)
                 {
+                    if (player.IsScp && player.Role != RoleTypeId.Scp0492)
+                    {
+                        response = "SCPs cannot use this command.";
+                        return false;
+                    }
+
                     role.Volunteers.Add(player);
 
                     if (role.LotteryTimeout == null)
