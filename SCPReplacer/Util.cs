@@ -66,9 +66,7 @@ namespace SCPReplacer
                 {
                     // For the player that replaced the SCP:
                     p.Broadcast(5, Plugin.Singleton.Translation.BroadcastHeader +
-                        Plugin.Singleton.Translation.ChangedSuccessfullySelfBroadcast.Replace("%NUMBER%", role.Name),
-                        Broadcast.BroadcastFlags.Normal,
-                        true // Clear previous broadcast to overwrite lingering volunteer opportunity message
+                        Plugin.Singleton.Translation.ChangedSuccessfullySelfBroadcast.Replace("%NUMBER%", role.Name)
                         );
 
                     // clear custom roles and effects the user already has
@@ -79,9 +77,7 @@ namespace SCPReplacer
                 }
                 // for everyone else:
                 p.Broadcast(5, Plugin.Singleton.Translation.BroadcastHeader +
-                    Plugin.Singleton.Translation.ChangedSuccessfullyEveryoneBroadcast.Replace("%NUMBER%", role.Name),
-                    Broadcast.BroadcastFlags.Normal,
-                    true // Clear previous broadcast to overwrite lingering volunteer opportunity message
+                    Plugin.Singleton.Translation.ChangedSuccessfullyEveryoneBroadcast.Replace("%NUMBER%", role.Name)
                     );
             }
             Log.Info($"{chosenPlayer.Nickname} has replaced SCP-{role.Name}");

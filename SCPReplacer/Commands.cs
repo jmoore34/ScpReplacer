@@ -47,6 +47,12 @@ namespace SCPReplacer
                         return false;
                     }
 
+                    if (Plugin.Singleton.ScpsAwaitingReplacement.Any(s => s.Volunteers.Contains(player)))
+                    {
+                        response = "You cannot volunteer more than once at a time";
+                        return false;
+                    }
+
                     role.Volunteers.Add(player);
 
                     if (role.LotteryTimeout == null)
@@ -59,9 +65,7 @@ namespace SCPReplacer
 
                     response = $"You have entered the lottery to become SCP {role.Name}.";
                     player.Broadcast(5, Plugin.Singleton.Translation.BroadcastHeader +
-                                        Plugin.Singleton.Translation.EnteredLotteryBroadcast.Replace("%NUMBER%", requestedScp),
-                                        Broadcast.BroadcastFlags.Normal,
-                                        true // Clear previous broadcast to overwrite lingering volunteer opportunity message
+                                        Plugin.Singleton.Translation.EnteredLotteryBroadcast.Replace("%NUMBER%", requestedScp)
                                         );
                     // replacement successful
                     return true;
