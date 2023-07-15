@@ -64,9 +64,12 @@ namespace SCPReplacer
                     }
 
                     response = $"You have entered the lottery to become SCP {role.Name}.";
-                    player.Broadcast(5, Plugin.Singleton.Translation.BroadcastHeader +
-                                        Plugin.Singleton.Translation.EnteredLotteryBroadcast.Replace("%NUMBER%", requestedScp)
-                                        );
+                    player.Broadcast(5,
+                        Plugin.Singleton.Translation.BroadcastHeader +
+                        Plugin.Singleton.Translation.EnteredLotteryBroadcast.Replace("%NUMBER%", requestedScp),
+                        Broadcast.BroadcastFlags.Normal,
+                        true
+                    );
                     // replacement successful
                     return true;
                 }

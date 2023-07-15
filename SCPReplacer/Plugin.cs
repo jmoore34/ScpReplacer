@@ -96,7 +96,7 @@ namespace SCPReplacer
                 {
                     var message = Translation.ReplaceBroadcast.Replace("%NUMBER%", scpNumber);
                     // Longer broadcast time since beta test revealed users were having trouble reading it all in time
-                    p.Broadcast(16, Translation.BroadcastHeader + message);
+                    p.Broadcast(16, Translation.BroadcastHeader + message, Broadcast.BroadcastFlags.Normal, true);
                     // Also send conole message in case they miss the broadcast
                     p.SendConsoleMessage(message, "yellow");
                 }
