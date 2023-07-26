@@ -54,7 +54,7 @@ namespace SCPReplacer
         {
             foreach (var scp in Player.List.Where(p => p.IsScp))
             {
-                scp.Broadcast(8, "Use <color=#ff4eac>.human</color> in the <color=#b8bd00>~</color> if you want to be a human class instead");
+                scp.Broadcast(8, "Use <color=#ff4eac>.human</color> in the <color=#b8bd00>~</color> console if you want to be a human class instead");
             }
 
             ScpsAwaitingReplacement.Clear();
