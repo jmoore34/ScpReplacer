@@ -12,6 +12,6 @@ namespace SCPReplacer
         public string Name { get; set; }
         public HashSet<Player> Volunteers { get; set; } = new HashSet<Player>();
         public CoroutineHandle? LotteryTimeout { get; set; } = null;
-        public CustomRole CustomRole { get; set; } = null;
+        public CustomRole? CustomRole { get; set; } = null;
     }
 }
