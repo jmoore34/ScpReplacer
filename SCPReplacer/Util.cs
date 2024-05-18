@@ -44,7 +44,7 @@ namespace SCPReplacer
 
         public static void Replace(this ScpToReplace role)
         {
-            var chosenPlayer = role.Volunteers.RandomElement();
+            var chosenPlayer = role.Volunteers.Where(p => p != null && p.IsAlive && !p.IsScp).RandomElement();
             role.Volunteers = null;
 
             // Late join spawn reason used to help distinguish from moderator forececlass

@@ -47,9 +47,9 @@ namespace SCPReplacer
                         return false;
                     }
 
-                    if (Plugin.Singleton.ScpsAwaitingReplacement.Any(s => s.Volunteers.Contains(player)))
+                    if (role.Volunteers.Contains(player))
                     {
-                        response = "You cannot volunteer more than once at a time";
+                        response = "You have already volunteered to replace this SCP";
                         return false;
                     }
 
