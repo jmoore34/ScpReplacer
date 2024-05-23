@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>10.0</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EXILED" Version="8.9.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp-firstpass"
+      HintPath="$(MANAGED)\Assembly-CSharp-firstpass.dll" Private="false" />
+    <Reference Include="Mirror" HintPath="$(MANAGED)\Mirror.dll" Private="false" />
+    <Reference Include="UnityEngine" HintPath="$(MANAGED)\UnityEngine.dll" Private="false" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(MANAGED)\UnityEngine.CoreModule.dll"
+      Private="false" />
+    <Reference Include="UnityEngine.PhysicsModule"
+      HintPath="$(MANAGED)\UnityEngine.PhysicsModule.dll" Private="false" />
+    <Reference Include="Pooling" HintPath="$(MANAGED)\Pooling.dll" Private="false" />
+  </ItemGroup>
+
+</Project>
