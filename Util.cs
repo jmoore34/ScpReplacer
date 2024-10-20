@@ -8,6 +8,8 @@ using System.Text.RegularExpressions;
 
 namespace SCPReplacer
 {
+    using PlayerRoles;
+
     public static class Util
     {
         /// <summary>
@@ -48,8 +50,13 @@ namespace SCPReplacer
             role.Volunteers = null;
 
             // Late join spawn reason used to help distinguish from moderator forececlass
-            if (role.CustomRole is not null)
+            if (role.CustomRole is not null && role.CustomRole.Role != RoleTypeId.None)
             {
+                Timing.CallDelayed(1f, () => role.CustomRole.AddRole(chosenPlayer));
+            }
+            else if (role.CustomRole is not null)
+            {
+                chosenPlayer.Role.Set(role.Role, Exiled.API.Enums.SpawnReason.LateJoin);
                 Timing.CallDelayed(1f, () => role.CustomRole.AddRole(chosenPlayer));
             }
             else
