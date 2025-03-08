@@ -139,14 +139,15 @@ namespace SCPReplacer
                     _ => RoleTypeId.FacilityGuard
                 };
                 response = $"You became a {newRole}";
+                foreach (CustomRole custom in scpPlayer.GetCustomRoles())
+                    custom.RemoveRole(scpPlayer);
                 scpPlayer.Role.Set(newRole, Exiled.API.Enums.SpawnReason.LateJoin, RoleSpawnFlags.All);
                 if (newRole is RoleTypeId.ClassD)
                 {
                     scpPlayer.AddItem(ItemType.Flashlight);
                     scpPlayer.AddItem(ItemType.Coin);
                 }
-                foreach (CustomRole custom in scpPlayer.GetCustomRoles())
-                    custom.RemoveRole(scpPlayer);
+
                 scpPlayer.Broadcast(10, Plugin.Singleton.Translation.BroadcastHeader + $"You became a <color={newRole.GetColor().ToHex()}>{newRole.GetFullName()}</color>");
                 return true;
             }
