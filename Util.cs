@@ -49,6 +49,11 @@ namespace SCPReplacer
             var chosenPlayer = role.Volunteers.Where(p => p != null && p.IsAlive && !p.IsScp).RandomElement();
             role.Volunteers = null;
 
+            foreach (CustomRole currentRole in chosenPlayer.GetCustomRoles())
+            {
+                currentRole.RemoveRole(chosenPlayer);
+            }
+
             // Late join spawn reason used to help distinguish from moderator forececlass
             if (role.CustomRole is not null && role.CustomRole.Role != RoleTypeId.None)
             {
